@@ -7,6 +7,7 @@ O **Nutri-AI** é uma API de alto desempenho construída em Node.js e TypeScript
 - **Planos Personalizados:** Gera dietas com base em Nome, Idade, Peso, Altura, Sexo e Objetivo.
 - **Base de Conhecimento:** A IA utiliza um arquivo de diretrizes técnicas (`diretrizes.md`) para garantir cálculos precisos de macronutrientes e IMC.
 - **Streaming de Resposta:** Entrega o texto via SSE, permitindo que o usuário veja a dieta sendo escrita instantaneamente.
+- **Persistência Local Automática:** Salva automaticamente cada plano gerado em um arquivo `.txt` em um diretório configurado.
 - **Validação Rigorosa:** Uso de Zod para garantir que os dados de entrada estejam sempre corretos.
 - **Arquitetura Moderna:** TypeScript com path aliases (`@/`), facilitando a manutenção e legibilidade.
 
@@ -44,6 +45,7 @@ Antes de começar, você precisará ter instalado:
    ```env
    PORT=3333
    OPENAI_API_KEY=sua_chave_aqui
+   SAVE_PATH=/caminho/para/salvar/planos
    ```
 
 ## 🏃 Como Rodar
@@ -88,7 +90,7 @@ Ao finalizar, a API envia:
 ```text
 ├── src/
 │   ├── controller/    # Lógica de controle das rotas
-│   ├── lib/           # Clientes de serviços externos (OpenAI)
+│   ├── lib/           # Serviços e clientes externos (OpenAI, FileService)
 │   ├── schema/        # Schemas de validação (Zod)
 │   ├── types/         # Definições de tipos e Enums
 │   ├── agent.ts       # Lógica de integração com a IA
@@ -97,4 +99,3 @@ Ao finalizar, a API envia:
 ├── knowledge/         # Base de conhecimento técnica (.md)
 └── dist/              # Código compilado para produção
 ```
-
