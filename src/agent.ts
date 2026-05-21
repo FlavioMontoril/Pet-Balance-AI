@@ -1,4 +1,5 @@
 import { openAIClient } from "@/lib/openAI-client";
+import { fileService } from "@/lib/file-service";
 import { buildSystemPrompt, buildUserPrompt } from "@/prompt";
 import { DietPlanSchema } from "@/schema/diet-plan";
 import fs from "fs";
@@ -9,7 +10,7 @@ export async function* generateDietPlan(data: DietPlanSchema) {
   const response = await openAIClient.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
-      { role: "system", content: `${buildSystemPrompt()}\n\nDiretrizes Técnicas:\n${diretrizes}` },
+      {role: "system", content: `${buildSystemPrompt()}\n\nDiretrizes Técnicas:\n${diretrizes}`},
       { role: "user", content: buildUserPrompt(data) },
     ],
     temperature: 0.6,
@@ -26,6 +27,14 @@ export async function* generateDietPlan(data: DietPlanSchema) {
       yield _data;
     }
   }
+
+  // Utiliza o novo componente para salvar o arquivo
+  const savedPath = await fileService.saveDietToFile(data.name, fullResponse);
+
+  if (savedPath) {
+    console.log(`[FileService] Plano salvo com sucesso: ${savedPath}`);
+  }
+
   console.log(fullResponse);
   // console.log(response.choices[0]?.message);
 }
