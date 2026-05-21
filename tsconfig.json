@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    "module": "nodenext",
+    "target": "es2023",
+    "types": ["node"],
+    "lib": ["ES2023"],
+    "esModuleInterop": true,
+    "moduleResolution": "nodenext",
+
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
+    "forceConsistentCasingInFileNames": true,
+
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": false,
+
+    "strict": true,
+    "verbatimModuleSyntax": false,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
