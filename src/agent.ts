@@ -1,6 +1,6 @@
-import { openAIClient } from "./lib/openAI-client";
-import { buildSystemPrompt, buildUserPrompt } from "./prompt";
-import { DietPlanSchema } from "./schema/diet-plan";
+import { openAIClient } from "@/lib/openAI-client";
+import { buildSystemPrompt, buildUserPrompt } from "@/prompt";
+import { DietPlanSchema } from "@/schema/diet-plan";
 import fs from "fs";
 
 export async function* generateDietPlan(data: DietPlanSchema) {
@@ -9,7 +9,7 @@ export async function* generateDietPlan(data: DietPlanSchema) {
   const response = await openAIClient.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
-      { role: "system", content: buildSystemPrompt() },
+      { role: "system", content: `${buildSystemPrompt()}\n\nDiretrizes Técnicas:\n${diretrizes}` },
       { role: "user", content: buildUserPrompt(data) },
     ],
     temperature: 0.6,

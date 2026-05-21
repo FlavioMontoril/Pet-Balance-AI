@@ -1,14 +1,13 @@
 import { Request, Response } from "express";
-import { dietPlanSchema } from "../schema/diet-plan";
+import { dietPlanSchema } from "@/schema/diet-plan";
 import { z } from "zod";
-import { generateDietPlan } from "../agent";
+import { generateDietPlan } from "@/agent";
 
-class PlanDietController {
+class DietPlanController {
   public async handle(req: Request, res: Response) {
     try {
       const bodySchema = dietPlanSchema.parse(req.body);
 
-      res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Content-Type", "text/event-stream");
       res.setHeader("Cache-Control", "no-cache");
       res.setHeader("Connection", "keep-alive");
@@ -33,4 +32,4 @@ class PlanDietController {
     }
   }
 }
-export default new PlanDietController();
+export default new DietPlanController();

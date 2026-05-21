@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "start:prod": "node dist/index.js",
     "start:dev": "tsx watch src/index.ts"
   },
@@ -19,6 +19,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.9.1",
+    "tsc-alias": "^1.8.17",
     "tsx": "^4.22.3",
     "typescript": "^6.0.3"
   }
