@@ -3,10 +3,10 @@ import { fileService } from "@/lib/file-service";
 import { pdfService } from "@/lib/pdf-service";
 import { qrCodeService } from "@/lib/qr-code-service";
 import { buildSystemPrompt, buildUserPrompt } from "@/prompt";
-import { DietPlanSchema } from "@/schema/diet-plan";
+import { PetPlanSchema } from "@/schema/diet-plan";
 import fs from "fs";
 
-export async function* generateDietPlan(data: DietPlanSchema) {
+export async function* generatePetGuide(data: PetPlanSchema) {
   const diretrizes = fs.readFileSync("knowledge/diretrizes.md", "utf-8");
 
   const response = await openAIClient.chat.completions.create({
@@ -14,7 +14,7 @@ export async function* generateDietPlan(data: DietPlanSchema) {
     messages: [
       {
         role: "system",
-        content: `${buildSystemPrompt()}\n\nDiretrizes Técnicas:\n${diretrizes}`,
+        content: `${buildSystemPrompt()}\n\nDiretrizes Técnicas Veterinárias:\n${diretrizes}`,
       },
       { role: "user", content: buildUserPrompt(data) },
     ],
@@ -39,14 +39,17 @@ export async function* generateDietPlan(data: DietPlanSchema) {
   // Lógica pós-streaming
   try {
     // 1. Salva o TXT
-    const savedPath = await fileService.saveDietToFile(data.name, fullResponse);
+    const savedPath = await fileService.savePetGuideToFile(
+      data.name,
+      fullResponse,
+    );
 
     if (savedPath) {
-      console.log(`[FileService] Plano salvo com sucesso: ${savedPath}`);
+      console.log(`[FileService] Guia salvo com sucesso: ${savedPath}`);
     }
 
     // 2. Gera o PDF
-    const pdfFileName = await pdfService.generateDietPdf(
+    const pdfFileName = await pdfService.generatePetPdf(
       data.name,
       fullResponse,
     );

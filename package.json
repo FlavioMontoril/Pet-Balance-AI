@@ -1,6 +1,7 @@
 {
-  "name": "dieta-server",
+  "name": "pet-balance-ai",
   "version": "1.0.0",
+  "author": "Flávio Montoril",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc && tsc-alias",

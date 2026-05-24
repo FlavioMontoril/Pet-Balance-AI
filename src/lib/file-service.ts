@@ -8,15 +8,15 @@ class FileService {
 
   /**
    * Salva o conteúdo em um arquivo .txt no diretório configurado.
-   * @param name Nome do usuário para compor o nome do arquivo.
-   * @param content Conteúdo textual da dieta.
+   * @param name Nome do pet para compor o nome do arquivo.
+   * @param content Conteúdo textual do guia.
    */
-  public async saveDietToFile(name: string, content: string): Promise<string | null> {
+  public async savePetGuideToFile(name: string, content: string): Promise<string | null> {
     try {
       const targetDir = this.savePath;
       // Normaliza o nome para o arquivo (remove espaços e coloca em lowercase)
       const sanitizedName = name.replace(/\s+/g, "-").toLowerCase();
-      const fileName = `dieta-${sanitizedName}-${Date.now()}.txt`;
+      const fileName = `pet-guide-${sanitizedName}-${Date.now()}.txt`;
       const filePath = path.join(targetDir, fileName);
 
       // Garante que o diretório existe

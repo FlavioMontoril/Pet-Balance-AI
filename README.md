@@ -1,18 +1,24 @@
-# 🥗 Nutri-AI - Dieta Server
+# 🐾 PetBalance AI - Guia de Saúde e Nutrição Animal
 
-O **Nutri-AI** é uma API de alto desempenho construída em Node.js e TypeScript, que utiliza Inteligência Artificial (OpenAI) para gerar planos alimentares semanais personalizados. A aplicação utiliza _Server-Sent Events (SSE)_ para entregar a resposta da IA em tempo real e agora conta com geração automática de PDF e QR Code para acesso móvel.
+O **PetBalance AI** é uma API de alto desempenho construída em Node.js e TypeScript, que utiliza Inteligência Artificial (OpenAI) para gerar guias personalizados de saúde, nutrição e atividades para cães e gatos. A aplicação utiliza _Server-Sent Events (SSE)_ para entregar a resposta da IA em tempo real e conta com geração automática de PDF e QR Code para facilitar o acesso dos tutores no dia a dia.
 
 ## 🚀 Funcionalidades
 
-- **Planos Personalizados:** Gera dietas com base em Nome, Idade, Peso, Altura, Sexo e Objetivo.
-- **Base de Conhecimento:** A IA utiliza um arquivo de diretrizes técnicas (`diretrizes.md`) para garantir precisão nutricional e cálculos corretos de macronutrientes e IMC.
-- **Streaming de Resposta:** Entrega o texto via SSE, permitindo que o usuário veja a dieta sendo escrita instantaneamente.
+- **Guias Personalizados:** Gera planos baseados em espécie, raça, idade, peso, nível de atividade e objetivo de saúde.
+- **Base de Conhecimento Veterinária:** A IA utiliza diretrizes técnicas (`diretrizes.md`) baseadas em fórmulas reais de Manutenção Energética (MER) para garantir precisão nas porções de alimento.
+- **Streaming de Resposta:** Entrega o guia via SSE, permitindo que o tutor veja as recomendações sendo escritas instantaneamente.
 - **Persistência Híbrida:**
-  - **Arquivo TXT:** Salvo automaticamente em uma pasta pessoal configurada fora do projeto (ex: Meus Documentos).
-  - **Arquivo PDF:** Gerado com formatação profissional e salvo na pasta `./uploads` interna.
-- **QR Code Inteligente:** Gera um QR Code no final do stream que aponta para o PDF na rede local, permitindo o acesso imediato via celular.
-- **Validação Rigorosa:** Uso de Zod para garantir que os dados de entrada estejam sempre corretos.
-- **Arquitetura Moderna:** TypeScript com path aliases (`@/`) e separação clara de responsabilidades através de Services.
+  - **Arquivo TXT:** Salvo automaticamente em uma pasta configurada para histórico.
+  - **Arquivo PDF:** Guia formatado profissionalmente salvo na pasta `./uploads`.
+- **QR Code Inteligente:** Gera um QR Code que aponta para o PDF, ideal para fixar no pote de ração ou geladeira para consulta rápida das porções.
+- **Validação Rigorosa:** Uso de Zod para garantir que os dados do pet estejam sempre corretos.
+
+## 🔄 Fluxo do Usuário
+
+1. O usuário informa os dados do pet: **nome, peso, raça, idade, nível de atividade e meta**.
+2. O sistema calcula a taxa metabólica e quanto de calorias o corpo do pet queima atualmente, com base nas diretrizes veterinárias.
+3. A IA gera um plano personalizado de saúde e nutrição.
+4. O guia é entregue em tempo real via streaming (SSE) e disponibilizado em PDF com um QR Code para acesso rápido.
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -20,7 +26,7 @@ O **Nutri-AI** é uma API de alto desempenho construída em Node.js e TypeScript
 - [Express]
 - [Zod]
 - [TypeScript]
-- [Tsc-Alias](Resolução de caminhos no build)
+  [Tsc-Alias](Resolução de caminhos no build)
 - [OpenAI API](https://openai.com/) (GPT-4o-mini)
 - [PDFKit](http://pdfkit.org/) (Geração de documentos PDF)
 - [QRCode](https://github.com/soldair/node-qrcode) (Geração de códigos QR)
@@ -30,8 +36,8 @@ O **Nutri-AI** é uma API de alto desempenho construída em Node.js e TypeScript
 Antes de começar, você precisará ter instalado:
 
 - [Node.js]
-- [Yarn]
-- Uma chave de API da [OpenAI](https://platform.openai.com/)
+- [Yarn] ou [NPM]
+- Chave de API da [OpenAI]
 
 ## 🔧 Instalação e Configuração
 
@@ -42,20 +48,14 @@ Antes de começar, você precisará ter instalado:
    cd dieta-server
    ```
 
-2. Instale as dependências:
-
-   ```bash
-   yarn install
-   ```
-
-3. Configure as variáveis de ambiente:
-   Crie um arquivo `.env` na raiz do projeto com base no `.env.example`:
+2. Instale as dependências: `yarn install`.
+3. Configure o `.env` (use o `.env.example` como base):
    ```env
-   PORT=3333
-   HOST=192.168.1.XX               # Seu IP na rede local para o QR Code
+   PORT=0000
+   HOST=0.0.0.0               # Seu IP na rede local
    OPENAI_API_KEY=sua_chave_aqui
-   SAVE_PATH=/caminho/pessoal/txt  # Onde salvar os arquivos TXT
-   PUBLIC_SAVE_PATH=./uploads      # Onde salvar os PDFs públicos
+   SAVE_PATH=./history             # Onde salvar os arquivos TXT
+   PUBLIC_SAVE_PATH=./uploads      # Onde salvar os PDFs
    ```
 
 ## 🏃 Como Rodar
@@ -75,23 +75,23 @@ yarn start:prod
 
 ## 📡 API Endpoints
 
-### Gerar Plano de Dieta
+### Gerar Guia do Pet
 
-`POST /api/diet-plan/`
+`POST /api/pet-guide/`
 
 **Corpo da Requisição (JSON):**
 
 ```json
 {
-  "name": "Paciente 1",
-  "age": 28,
-  "weight": 85,
-  "height": 180,
-  "sex": "MASCULINO",
-  "purpose": "HIPERTROFIA"
+  "name": "Rex",
+  "species": "CÃO",
+  "breed": "Golden Retriever",
+  "age": 5,
+  "weight": 32.5,
+  "activityLevel": "MODERADO",
+  "goal": "MANUTENÇÃO"
 }
 ```
-
 **Resposta:**
 A resposta é um stream de dados (`text/event-stream`). Ao final do texto da dieta, o servidor envia o QR Code em formato Base64 delimitado por tags especiais:
 `data: ---QRCODE_START---<base64_data>---QRCODE_END---`
@@ -102,19 +102,30 @@ Ao finalizar completamente o processo, a API envia:
 ## 📂 Estrutura do Projeto
 
 ```text
-├── src/
-│   ├── controller/    # Lógica de controle das rotas (Express)
-│   ├── lib/           # Services (OpenAI, File, Pdf, QrCode)
-│   ├── schema/        # Schemas de validação de dados (Zod)
-│   ├── types/         # Definições de tipos e Enums
-│   ├── agent.ts       # Orquestração da IA e fluxos pós-geração
-│   ├── prompt.ts      # Engenharia de prompts para a IA
-│   └── index.ts       # Ponto de entrada e configuração do servidor
-├── knowledge/         # Base de conhecimento técnica (.md)
-├── uploads/           # Pasta de arquivos públicos (ignorada pelo Git)
-└── dist/              # Código compilado para produção
+src/
+├── controller/    # Lógica de controle das requisições
+├── lib/           # Serviços externos (OpenAI, PDF, QR Code, File System)
+├── middlewares/   # Interceptadores de requisições
+├── schema/        # Esquemas de validação de dados (Zod)
+├── types/         # Definições de tipos TypeScript
+├── utils/         # Funções utilitárias (Ex: Configuração de SSE)
+├── agent.ts       # Lógica de integração com a IA
+├── index.ts       # Inicialização do servidor Express
+├── prompt.ts      # Engenharia de prompt para a IA
+└── route.ts       # Definição dos endpoints da API
+knowledge/         # Base de conhecimento técnica (Diretrizes Nutricionais)
+uploads/           # Armazenamento de PDFs e QR Codes gerados
 ```
 
-## 📄 Licença
+## 📄 Autor
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+Desenvolvido por **Flávio Montoril**.
+
+## ⚠️ Aviso Legal
+
+Este sistema foi desenvolvido por um **desenvolvedor de software** utilizando inteligência artificial e **não foi criado por um médico veterinário**. 
+
+As recomendações geradas são baseadas em diretrizes gerais e fórmulas nutricionais, mas não substituem a avaliação profissional. **Antes de seguir qualquer plano gerado por esta ferramenta, o tutor deve obrigatoriamente levar o pet a um veterinário ou nutricionista animal para uma avaliação completa.**
+
+O desenvolvedor **não se responsabiliza** por quaisquer danos, problemas de saúde ou prejuízos causados ao animal decorrentes do uso das informações fornecidas por este sistema. O uso desta ferramenta é de inteira responsabilidade do tutor.
+

@@ -8,13 +8,13 @@ class PdfService {
   }
 
   /**
-   * Converte o texto da dieta em um arquivo PDF.
+   * Converte o texto do guia em um arquivo PDF.
    */
-  public async generateDietPdf(name: string, content: string): Promise<string | null> {
+  public async generatePetPdf(name: string, content: string): Promise<string | null> {
     return new Promise((resolve) => {
       try {
         const sanitizedName = name.replace(/\s+/g, "-").toLowerCase();
-        const fileName = `dieta-${sanitizedName}-${Date.now()}.pdf`;
+        const fileName = `pet-guide-${sanitizedName}-${Date.now()}.pdf`;
         const filePath = path.join(this.savePath, fileName);
 
         // Garante que o diretório existe
@@ -28,9 +28,9 @@ class PdfService {
         doc.pipe(stream);
 
         // Estilização básica do PDF
-        doc.fontSize(20).text("Plano de Dieta Personalizado", { align: "center" });
+        doc.fontSize(20).text("PetBalance AI - Guia Personalizado", { align: "center" });
         doc.moveDown();
-        doc.fontSize(14).text(`Paciente: ${name}`);
+        doc.fontSize(14).text(`Pet: ${name}`);
         doc.text(`Data: ${new Date().toLocaleDateString("pt-BR")}`);
         doc.moveDown();
         doc.fontSize(12).text(content);

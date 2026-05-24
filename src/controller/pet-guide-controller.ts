@@ -1,18 +1,18 @@
 import { Request, Response } from "express";
-import { dietPlanSchema } from "@/schema/diet-plan";
+import { petPlanSchema } from "@/schema/diet-plan";
 import { z } from "zod";
-import { generateDietPlan } from "@/agent";
+import { generatePetGuide } from "@/agent";
 import { setupSSE } from "@/utils/setupSSE";
 
-class DietPlanController {
+class PetGuideController {
   public async handle(req: Request, res: Response) {
     try {
-      const bodySchema = dietPlanSchema.parse(req.body);
+      const bodySchema = petPlanSchema.parse(req.body);
 
       // 2. Só configura os headers DEPOIS que o Zod aprovar os dados
       setupSSE(res);
 
-      const stream = generateDietPlan(bodySchema);
+      const stream = generatePetGuide(bodySchema);
 
       for await (const chunk of stream) {
         res.write(`data: ${chunk}\n\n`);
@@ -30,4 +30,4 @@ class DietPlanController {
     }
   }
 }
-export default new DietPlanController();
+export default new PetGuideController();
