@@ -2,20 +2,22 @@ import { openAIClient } from "@/lib/openAI-client";
 import { fileService } from "@/lib/file-service";
 import { pdfService } from "@/lib/pdf-service";
 import { qrCodeService } from "@/lib/qr-code-service";
-import { buildSystemPrompt, buildUserPrompt } from "@/prompt";
+import {
+  buildDocSystemPrompt,
+  buildSystemPrompt,
+  buildUserPrompt,
+} from "@/prompt";
 import { PetPlanSchema } from "@/schema/diet-plan";
 import fs from "fs";
 
 export async function* generatePetGuide(data: PetPlanSchema) {
   const diretrizes = fs.readFileSync("knowledge/diretrizes.md", "utf-8");
 
-  const response = await openAIClient.chat.completions.create({
+  const stream = await openAIClient.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
-      {
-        role: "system",
-        content: `${buildSystemPrompt()}\n\nDiretrizes Técnicas Veterinárias:\n${diretrizes}`,
-      },
+      { role: "system", content: buildSystemPrompt() },
+      { role: "system", content: buildDocSystemPrompt(diretrizes) },
       { role: "user", content: buildUserPrompt(data) },
     ],
     temperature: 0.6,
@@ -25,7 +27,7 @@ export async function* generatePetGuide(data: PetPlanSchema) {
   let fullResponse = "";
   //YELD pode interromper a  execução e retornar de onde parou.
   //É como o return, porem pausa a função em vez de encerrá-las
-  for await (const chunk of response) {
+  for await (const chunk of stream) {
     const _data = chunk?.choices[0]?.delta?.content;
     if (_data) {
       fullResponse += _data;

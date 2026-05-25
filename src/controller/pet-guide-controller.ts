@@ -15,7 +15,11 @@ class PetGuideController {
       const stream = generatePetGuide(bodySchema);
 
       for await (const chunk of stream) {
-        res.write(`data: ${chunk}\n\n`);
+        if (chunk.startsWith("---QRCODE_START---")) {
+          res.write(`data: ${chunk}\n\n`);
+        } else {
+          res.write(`data: ${JSON.stringify(chunk)}\n\n`);
+        }
       }
 
       res.write("data: [DONE]\n\n");

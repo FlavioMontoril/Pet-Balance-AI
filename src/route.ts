@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as petGuideController from "@/controller/pet-guide-controller";
+import { router as petGuide } from "@/routes/pet-guide";
 export const router = Router();
 
-router.post("/api/pet-guide/", petGuideController.default.handle);
+router.use("/api/pet-guide/", petGuide);
